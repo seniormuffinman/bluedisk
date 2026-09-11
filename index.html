@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0f1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png" />
+  <link rel="apple-touch-icon" href="icons/icon-180.png" />
+  <title>Blue Zone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0f1a;
+      --surface: #121a2b;
+      --surface-2: #1a2438;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #e8eef8;
+      --muted: #8b9bb4;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --ok: #22c55e;
+      --ok-soft: rgba(34, 197, 94, 0.12);
+      --warn: #f59e0b;
+      --warn-soft: rgba(245, 158, 11, 0.12);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.12);
+      --radius: 16px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: calc(20px + var(--safe-top)) 20px calc(24px + var(--safe-bottom));
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.02em;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+    }
+
+    .logo-text {
+      font-weight: 600;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+
+    .clock {
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .ctrl {
+      flex: 1;
+      min-width: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .ctrl label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    select {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      max-width: 110px;
+      text-align: right;
+    }
+
+    select option {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--surface-2);
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle-slider::before {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: 2px;
+      top: 2px;
+      background: var(--muted);
+      border-radius: 50%;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .toggle input:checked + .toggle-slider {
+      background: var(--accent-soft);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .toggle input:checked + .toggle-slider::before {
+      transform: translateX(18px);
+      background: var(--accent);
+    }
+
+    .holiday-banner {
+      display: none;
+      background: var(--ok-soft);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      color: var(--ok);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 14px;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .holiday-banner.visible {
+      display: flex;
+    }
+
+    .status-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 20px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .status-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      background: var(--status-color, var(--accent));
+    }
+
+    .status-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .status-main {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .status-sub {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .tile {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .tile-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .tile-value {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tile-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .action {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .action-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      font-size: 18px;
+    }
+
+    .action-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .action-title {
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
+
+    .action-desc {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .disc-time {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+      color: var(--accent);
+      margin-top: 4px;
+    }
+
+    details {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    summary {
+      list-style: none;
+      padding: 14px 16px;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    summary::after {
+      content: "+";
+      font-size: 18px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    details[open] summary::after {
+      content: "−";
+    }
+
+    .details-body {
+      padding: 0 16px 16px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .details-body ul {
+      padding-left: 18px;
+      margin-top: 8px;
+    }
+
+    .details-body li {
+      margin-bottom: 4px;
+    }
+
+    .details-body strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .meta {
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0.75;
+      margin-top: 8px;
+    }
+
+    footer {
+      margin-top: auto;
+      padding-top: 20px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .btn-link {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f4f6fa;
+        --surface: #ffffff;
+        --surface-2: #f0f3f8;
+        --border: rgba(0, 0, 0, 0.08);
+        --text: #0f172a;
+        --muted: #64748b;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <div class="logo-mark">BZ</div>
+      <span class="logo-text">Blue Zone</span>
+    </div>
+    <div class="clock" id="clock">--:--</div>
+  </header>
+
+  <div class="controls">
+    <div class="ctrl">
+      <label for="canton">Canton</label>
+      <select id="canton" aria-label="Canton">
+        <option value="ZH">Zürich</option>
+        <option value="BE">Bern</option>
+        <option value="GE">Genève</option>
+        <option value="VD">Vaud</option>
+        <option value="BS">Basel-Stadt</option>
+        <option value="BL">Basel-Land</option>
+        <option value="AG">Aargau</option>
+        <option value="SG">St. Gallen</option>
+        <option value="LU">Luzern</option>
+        <option value="TI">Ticino</option>
+        <option value="VS">Valais</option>
+        <option value="ZG">Zug</option>
+        <option value="FR">Fribourg</option>
+        <option value="SO">Solothurn</option>
+        <option value="TG">Thurgau</option>
+        <option value="SH">Schaffhausen</option>
+        <option value="GR">Graubünden</option>
+        <option value="NE">Neuchâtel</option>
+        <option value="JU">Jura</option>
+        <option value="SZ">Schwyz</option>
+        <option value="UR">Uri</option>
+        <option value="OW">Obwalden</option>
+        <option value="NW">Nidwalden</option>
+        <option value="GL">Glarus</option>
+        <option value="AR">Appenzell AR</option>
+        <option value="AI">Appenzell IR</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label for="holidayToggle">Public holiday</label>
+      <label class="toggle">
+        <input type="checkbox" id="holidayToggle" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="holiday-banner" id="holidayBanner">
+    <span>🎉</span>
+    <span id="holidayName">Public holiday today</span>
+  </div>
+
+  <section class="status-card" id="statusCard">
+    <div class="status-label">Current status</div>
+    <div class="status-main" id="statusMain">Checking…</div>
+    <div class="status-sub" id="statusSub"></div>
+  </section>
+
+  <div class="grid">
+    <div class="tile">
+      <div class="tile-label">Set disc to</div>
+      <div class="tile-value" id="discTime">—</div>
+      <div class="tile-hint" id="discHint">Next half-hour</div>
+    </div>
+    <div class="tile">
+      <div class="tile-label">Leave by</div>
+      <div class="tile-value" id="leaveBy">—</div>
+      <div class="tile-hint" id="leaveHint">Max stay</div>
+    </div>
+  </div>
+
+  <div class="action" id="actionBox">
+    <div class="action-icon" id="actionIcon">◎</div>
+    <div class="action-body">
+      <div class="action-title" id="actionTitle">Parking disc</div>
+      <div class="action-desc" id="actionDesc">Set the wheel to the next time-line after arrival.</div>
+      <div class="disc-time" id="discBig" style="display:none"></div>
+    </div>
+  </div>
+
+  <details>
+    <summary>How to set the disc</summary>
+    <div class="details-body">
+      Set the wheel to the <strong>next time-line after</strong> your actual arrival time.
+      <ul>
+        <li>Arrival 9:05 → set to <strong>9:30</strong> → leave by 10:30</li>
+        <li>Arrival 14:20 → set to <strong>14:30</strong> → leave by 15:30</li>
+      </ul>
+      Electronic discs are not permitted. The disc must be clearly visible and upright.
+    </div>
+  </details>
+
+  <details>
+    <summary>Time limits</summary>
+    <div class="details-body">
+      <strong>Mon–Sat</strong>
+      <ul>
+        <li>08:00–11:30 &amp; 13:30–18:00 → max <strong>1 hour</strong></li>
+        <li>Arrival 11:30–13:30 → valid until <strong>14:30</strong></li>
+        <li>Arrival 18:00–08:00 → valid until <strong>09:00</strong></li>
+      </ul>
+      <strong>Sundays &amp; public holidays</strong> — no limit unless an extra sign says otherwise.<br /><br />
+      No disc needed 19:00–07:59 if you leave before 08:00.
+    </div>
+  </details>
+
+  <details>
+    <summary>Where to get a disc</summary>
+    <div class="details-body">
+      <ul>
+        <li>Transport Service licensing office — Mühlegasse 18</li>
+        <li>Zurich City Police guards</li>
+        <li>Specialist retailers</li>
+      </ul>
+      Rules are also printed on the back of the disc (Signaling Ordinance of 5 Sept 1979).
+      <p class="meta" id="holidayMeta">Holidays: loading…</p>
+    </div>
+  </details>
+
+  <footer>
+    Blue Zone · Parking disc · <button type="button" class="btn-link" id="detectBtn">Detect location</button>
+  </footer>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const STORAGE_CANTON = "bz-canton";
+    const STORAGE_HOLIDAYS = "bz-holidays";
+
+    const CANTON_CENTERS = {
+      ZH: [47.3769, 8.5417], BE: [46.9480, 7.4474], GE: [46.2044, 6.1432],
+      VD: [46.5197, 6.6323], BS: [47.5596, 7.5886], BL: [47.4416, 7.7649],
+      AG: [47.3900, 8.0450], SG: [47.4245, 9.3767], LU: [47.0502, 8.3093],
+      TI: [46.2044, 9.0211], VS: [46.2333, 7.6000], ZG: [47.1662, 8.5155],
+      FR: [46.8065, 7.1620], SO: [47.2088, 7.5323], TG: [47.6038, 9.0550],
+      SH: [47.6973, 8.6349], GR: [46.8499, 9.5329], NE: [46.9900, 6.9293],
+      JU: [47.3654, 7.3452], SZ: [47.0207, 8.6530], UR: [46.8804, 8.6444],
+      OW: [46.8770, 8.2510], NW: [46.9268, 8.3850], GL: [47.0404, 9.0672],
+      AR: [47.3667, 9.3000], AI: [47.3308, 9.4090]
+    };
+
+    let holidays = [];
+    let forceHoliday = false;
+    let autoHoliday = false;
+    let autoHolidayName = "";
+
+    function pad(n) { return String(n).padStart(2, "0"); }
+    function formatTime(d) { return pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+    function minutesSinceMidnight(d) { return d.getHours() * 60 + d.getMinutes(); }
+    function fromMinutes(m) {
+      const h = Math.floor(m / 60) % 24;
+      return pad(h) + ":" + pad(m % 60);
+    }
+    function dateKey(d) {
+      return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+    }
+
+    function nextTimeLineAfter(mins) {
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      if (m === 0) return h * 60 + 30;
+      if (m < 30) return h * 60 + 30;
+      return (h + 1) * 60;
+    }
+
+    function isSunday(d) { return d.getDay() === 0; }
+
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function nearestCanton(lat, lon) {
+      let best = "ZH", bestDist = Infinity;
+      for (const [code, coords] of Object.entries(CANTON_CENTERS)) {
+        const d = haversine(lat, lon, coords[0], coords[1]);
+        if (d < bestDist) { bestDist = d; best = code; }
+      }
+      return best;
+    }
+
+    async function fetchHolidays(canton) {
+      const year = new Date().getFullYear();
+      const next = year + 1;
+      const urls = [
+        "https://openholidaysapi.org/PublicHolidays?countryIsoCode=CH&languageIsoCode=EN&validFrom=" + year + "-01-01&validTo=" + year + "-12-31&subdivisionCode=CH-" + canton,
+        "https://openholidaysapi.org/PublicHolidays?countryIsoCode=CH&languageIsoCode=EN&validFrom=" + next + "-01-01&validTo=" + next + "-12-31&subdivisionCode=CH-" + canton
+      ];
+
+      try {
+        const results = await Promise.all(
+          urls.map(function(u) { return fetch(u).then(function(r) { return r.ok ? r.json() : []; }); })
+        );
+        const list = [];
+        results.forEach(function(arr) {
+          arr.forEach(function(h) {
+            if (h.type === "Public" || h.type === "Optional") {
+              const name = (h.name && h.name[0] && h.name[0].text) || "Public holiday";
+              list.push({ date: h.startDate, name: name });
+            }
+          });
+        });
+        const map = new Map();
+        list.forEach(function(h) { if (!map.has(h.date)) map.set(h.date, h); });
+        holidays = Array.from(map.values());
+        localStorage.setItem(STORAGE_HOLIDAYS, JSON.stringify({ canton: canton, year: year, holidays: holidays }));
+        $("holidayMeta").textContent = "Holidays loaded for CH-" + canton + " · OpenHolidays API";
+        checkTodayHoliday();
+        update();
+      } catch (e) {
+        $("holidayMeta").textContent = "Could not load holidays (offline). Use the toggle.";
+        try {
+          const cached = JSON.parse(localStorage.getItem(STORAGE_HOLIDAYS) || "{}");
+          if (cached.holidays) {
+            holidays = cached.holidays;
+            checkTodayHoliday();
+            update();
+          }
+        } catch (_) {}
+      }
+    }
+
+    function checkTodayHoliday() {
+      const key = dateKey(new Date());
+      const found = holidays.find(function(h) { return h.date === key; });
+      autoHoliday = !!found;
+      autoHolidayName = found ? found.name : "";
+      if (!forceHoliday) {
+        $("holidayToggle").checked = autoHoliday;
+      }
+      updateBanner();
+    }
+
+    function updateBanner() {
+      const isOn = $("holidayToggle").checked;
+      const banner = $("holidayBanner");
+      if (isOn || autoHoliday) {
+        banner.classList.add("visible");
+        if (autoHoliday && isOn) {
+          $("holidayName").textContent = autoHolidayName + " · no time limit";
+        } else if (isOn) {
+          $("holidayName").textContent = "Treated as public holiday · no time limit";
+        } else {
+          $("holidayName").textContent = autoHolidayName + " · no time limit";
+        }
+      } else {
+        banner.classList.remove("visible");
+      }
+    }
+
+    function compute(now) {
+      const isHoliday = $("holidayToggle").checked;
+      const mins = minutesSinceMidnight(now);
+
+      if (isHoliday || isSunday(now)) {
+        return {
+          title: "No time limit",
+          sub: isHoliday
+            ? (autoHolidayName || "Public holiday") + " · free unless extra sign"
+            : "Sunday · free unless extra sign",
+          disc: null,
+          leaveBy: null,
+          color: "var(--ok)",
+          actionTitle: "No disc required",
+          actionDesc: "Unless an additional sign indicates a time limit.",
+          showDisc: false
+        };
+      }
+
+      if (mins >= 19 * 60 || mins < 8 * 60) {
+        if (mins < 8 * 60) {
+          const setTo = nextTimeLineAfter(mins);
+          return {
+            title: "Valid until 09:00",
+            sub: "Arrival before 08:00 · set disc for morning",
+            disc: fromMinutes(setTo),
+            leaveBy: "09:00",
+            color: "var(--warn)",
+            actionTitle: "Set disc to",
+            actionDesc: "If staying past 08:00, set the disc now.",
+            showDisc: true,
+            discBig: fromMinutes(setTo)
+          };
+        }
+        return {
+          title: "No disc needed",
+          sub: "Until 08:00 · if you leave before 08:00",
+          disc: null,
+          leaveBy: "08:00",
+          color: "var(--accent)",
+          actionTitle: "Free parking window",
+          actionDesc: "No disc required overnight. Set disc before 08:00 if staying.",
+          showDisc: false
+        };
+      }
+
+      if (mins >= 8 * 60 && mins < 11 * 60 + 30) {
+        const setTo = nextTimeLineAfter(mins);
+        return {
+          title: "Max 1 hour",
+          sub: "08:00 – 11:30 window",
+          disc: fromMinutes(setTo),
+          leaveBy: fromMinutes(setTo + 60),
+          color: "var(--accent)",
+          actionTitle: "Set disc to",
+          actionDesc: "Next time-line after arrival. Leave within 1 hour of that mark.",
+          showDisc: true,
+          discBig: fromMinutes(setTo)
+        };
+      }
+
+      if (mins >= 11 * 60 + 30 && mins < 13 * 60 + 30) {
+        const setTo = nextTimeLineAfter(mins);
+        return {
+          title: "Valid until 14:30",
+          sub: "Arrival between 11:30 and 13:30",
+          disc: fromMinutes(setTo),
+          leaveBy: "14:30",
+          color: "var(--warn)",
+          actionTitle: "Set disc to",
+          actionDesc: "You may stay until 14:30 in this window.",
+          showDisc: true,
+          discBig: fromMinutes(setTo)
+        };
+      }
+
+      if (mins >= 13 * 60 + 30 && mins < 18 * 60) {
+        const setTo = nextTimeLineAfter(mins);
+        return {
+          title: "Max 1 hour",
+          sub: "13:30 – 18:00 window",
+          disc: fromMinutes(setTo),
+          leaveBy: fromMinutes(setTo + 60),
+          color: "var(--accent)",
+          actionTitle: "Set disc to",
+          actionDesc: "Next time-line after arrival. Leave within 1 hour of that mark.",
+          showDisc: true,
+          discBig: fromMinutes(setTo)
+        };
+      }
+
+      if (mins >= 18 * 60 && mins < 19 * 60) {
+        const setTo = nextTimeLineAfter(mins);
+        return {
+          title: "Valid until 09:00",
+          sub: "Arrival after 18:00",
+          disc: fromMinutes(setTo),
+          leaveBy: "09:00",
+          color: "var(--warn)",
+          actionTitle: "Set disc to",
+          actionDesc: "Overnight stay is fine. Leave by 09:00 next morning.",
+          showDisc: true,
+          discBig: fromMinutes(setTo)
+        };
+      }
+
+      return {
+        title: "Check signs",
+        sub: "Unable to determine rules for this moment",
+        disc: null,
+        leaveBy: null,
+        color: "var(--muted)",
+        actionTitle: "Look at local signs",
+        actionDesc: "Rules may vary by additional boards.",
+        showDisc: false
+      };
+    }
+
+    function update() {
+      const now = new Date();
+      $("clock").textContent = DAYS[now.getDay()] + " " + formatTime(now);
+
+      const r = compute(now);
+      $("statusCard").style.setProperty("--status-color", r.color);
+      $("statusMain").textContent = r.title;
+      $("statusSub").textContent = r.sub;
+      $("discTime").textContent = r.disc || "—";
+      $("leaveBy").textContent = r.leaveBy || "—";
+      $("discHint").textContent = r.disc ? "Next half-hour mark" : "Not required";
+      $("leaveHint").textContent = r.leaveBy ? "Must be gone by" : "—";
+      $("actionTitle").textContent = r.actionTitle;
+      $("actionDesc").textContent = r.actionDesc;
+
+      const big = $("discBig");
+      if (r.showDisc && r.discBig) {
+        big.style.display = "block";
+        big.textContent = r.discBig;
+      } else {
+        big.style.display = "none";
+      }
+      $("actionIcon").textContent = r.showDisc ? "◎" : "○";
+      updateBanner();
+    }
+
+    $("canton").addEventListener("change", function(e) {
+      const c = e.target.value;
+      localStorage.setItem(STORAGE_CANTON, c);
+      forceHoliday = false;
+      fetchHolidays(c);
+    });
+
+    $("holidayToggle").addEventListener("change", function() {
+      forceHoliday = true;
+      update();
+    });
+
+    $("detectBtn").addEventListener("click", function() {
+      if (!navigator.geolocation) {
+        alert("Geolocation not available on this device.");
+        return;
+      }
+      $("detectBtn").textContent = "Detecting…";
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          const code = nearestCanton(pos.coords.latitude, pos.coords.longitude);
+          $("canton").value = code;
+          localStorage.setItem(STORAGE_CANTON, code);
+          forceHoliday = false;
+          fetchHolidays(code);
+          $("detectBtn").textContent = "Detected: " + code;
+          setTimeout(function() { $("detectBtn").textContent = "Detect location"; }, 2500);
+        },
+        function() {
+          $("detectBtn").textContent = "Location denied";
+          setTimeout(function() { $("detectBtn").textContent = "Detect location"; }, 2500);
+        },
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+      );
+    });
+
+    const savedCanton = localStorage.getItem(STORAGE_CANTON) || "ZH";
+    $("canton").value = savedCanton;
+
+    try {
+      const cached = JSON.parse(localStorage.getItem(STORAGE_HOLIDAYS) || "{}");
+      if (cached.holidays && cached.canton === savedCanton) {
+        holidays = cached.holidays;
+        checkTodayHoliday();
+      }
+    } catch (_) {}
+
+    fetchHolidays(savedCanton);
+    update();
+    setInterval(update, 1000);
+  </script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("./sw.js").catch(function () {});
+      });
+    }
+  </script>
+</body>
+</html>
