@@ -1,7 +1,7 @@
 {
   "name": "Blue Zone Parking",
   "short_name": "Blue Zone",
-  "description": "Parking disc helper for Blue Zone areas. Shows max time, disc setting and leave-by time.",
+  "description": "Parking disc helper for Blue Zone areas. Timer, disc setting, leave-by time.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

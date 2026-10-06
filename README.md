@@ -1,49 +1,36 @@
-# Blue Zone Parking
+# Blue Zone
 
-Minimal parking-disc helper for Blue Zone / "Parking with parking disc" areas.
+Shows if you can park in a Swiss Blue Zone, which time to set on the disc, and when you must leave.
 
-Shows whether you can park right now, what time to set on the disc, and when you must leave. Uses device time + optional public-holiday data by Swiss canton.
+**Live:** [seniormuffinman.github.io/bluedisk](https://seniormuffinman.github.io/bluedisk/)
 
-## Live demo (after you enable Pages)
+## Run
 
-`https://YOUR_USERNAME.github.io/blue-zone-parking/`
+Open `index.html` in a browser. That is enough for the clock and the rules.
 
-## Deploy to GitHub Pages
+To use location, notifications, or “Add to Home Screen”, the files must be served as a site (GitHub or GitLab Pages below).
 
-### 1. Create the repo
-1. Go to [github.com/new](https://github.com/new)
-2. Repository name: `blue-zone-parking` (or any name)
-3. Public → Create repository
+## GitHub Pages
 
-### 2. Push this folder
+Repo: [seniormuffinman/bluedisk](https://github.com/seniormuffinman/bluedisk)
 
-```bash
-cd blue-zone-parking
-git init
-git add .
-git commit -m "Blue Zone parking disc helper"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/blue-zone-parking.git
-git push -u origin main
-```
+The address is always `https://<user>.github.io/<repo-name>/`. This project’s repo is named **bluedisk**, so the site is:
 
-### 3. Enable GitHub Pages
-1. Repo → **Settings** → **Pages**
-2. Source: **Deploy from a branch**
-3. Branch: `main` / folder `/ (root)` → Save
-4. Wait ~30–60 seconds, then open the URL shown
+https://seniormuffinman.github.io/bluedisk/
 
-### 4. Install on phone
-- Android Chrome: open the site → menu → **Install app** / **Add to Home screen**
-- iOS Safari: Share → **Add to Home Screen**
+If you see *“The site configured at this address does not contain the requested file”*, the URL is wrong (for example `…/blue-zone-parking/` or a repo that has no `index.html` at the root).
 
-## Features
-- Live device clock
-- Max stay + exact disc setting time
-- Canton selector + public holidays via OpenHolidays API
-- Manual public-holiday toggle
-- Optional location → nearest canton
-- Works offline after first load (PWA)
+Settings → Pages → Deploy from a branch → `main` / `/ (root)`.
 
-## Legal note
-Rules based on typical Swiss Blue Zone / parking-disc signage (Signaling Ordinance). Always follow local signs.
+## GitLab Pages
+
+1. New GitLab project.
+2. Put **these files at the project root** (`index.html` must not sit in a subfolder).
+3. Push to the default branch. `.gitlab-ci.yml` copies them into `public/` and publishes the site.
+4. Open **Deploy → Pages** for the URL (`https://<user>.gitlab.io/<project>/`).
+
+Same 404 if `index.html` is nested, e.g. `blue-zone-parking/index.html`. Move everything up one level and push again.
+
+## Phone
+
+Open the Pages URL → browser menu → **Add to Home Screen**.

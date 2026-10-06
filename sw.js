@@ -1,4 +1,4 @@
-const CACHE = "blue-zone-v1";
+const CACHE = "blue-zone-v4";
 const ASSETS = [
   "./",
   "./index.html",
@@ -23,20 +23,19 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
-  // Network-first for holiday API, cache-first for app shell
   if (url.hostname === "openholidaysapi.org") {
     e.respondWith(
-      fetch(e.request)
-        .then((res) => res)
-        .catch(() => caches.match(e.request))
+      fetch(e.request).then((res) => res).catch(() => caches.match(e.request))
     );
     return;
   }
   e.respondWith(
-    caches.match(e.request).then((cached) => cached || fetch(e.request).then((res) => {
-      const copy = res.clone();
-      caches.open(CACHE).then((c) => c.put(e.request, copy));
-      return res;
-    }).catch(() => cached))
+    caches.match(e.request).then((cached) => {
+      return cached || fetch(e.request).then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put(e.request, copy));
+        return res;
+      }).catch(() => cached);
+    })
   );
 });
